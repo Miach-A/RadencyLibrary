@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace RadencyLibrary.Controllers
 {
@@ -6,13 +7,13 @@ namespace RadencyLibrary.Controllers
     [Route("api/[controller]")]
     public abstract class ApiControllerBase : ControllerBase
     {
-        //private ISender _mediator = null!;
-        //public ApiControllerBase(ISender mediator)
-        //{
-        //    _mediator = mediator;
-        //}
+        private ISender _mediator = null!;
+        public ApiControllerBase(ISender mediator)
+        {
+            _mediator = mediator;
+        }
 
-        //protected ISender Mediator => _mediator;
+        protected ISender Mediator => _mediator;
     }
 
 }

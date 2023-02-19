@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using AutoMapper;
+using RadencyLibrary.Common.Mappings;
+using System.Reflection;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -8,6 +10,15 @@ public static class ConfigureServices
         this IServiceCollection services,
         IConfiguration configuration)
     {
+
+        var maperConfig = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<BookProfile>();
+        });
+
+        maperConfig.AssertConfigurationIsValid();
+        var mapper = maperConfig.CreateMapper();
+
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
