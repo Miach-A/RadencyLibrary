@@ -1,6 +1,10 @@
 ﻿using AutoMapper;
+using FluentValidation;
+using MediatR;
+using RadencyLibrary.Common.Behaviours;
 using RadencyLibrary.Common.Mappings;
 using System.Reflection;
+
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -10,7 +14,7 @@ public static class ConfigureServices
         this IServiceCollection services,
         IConfiguration configuration)
     {
-
+        var assembly = Assembly.GetExecutingAssembly();
         var maperConfig = new MapperConfiguration(cfg =>
         {
             cfg.AddProfile<BookProfile>();
@@ -22,7 +26,10 @@ public static class ConfigureServices
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+        services.AddValidatorsFromAssembly(assembly);
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(assembly));
+        //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 
         return services;
     }

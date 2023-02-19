@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RadencyLibrary.CQRS.Book.Queries.GetAllBooks;
 
@@ -11,7 +12,18 @@ namespace RadencyLibrary.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllBooks([FromQuery] GetAllBookQuery query)
         {
-            return Ok(await Mediator.Send(query));
+            try
+            {
+                return Ok(await Mediator.Send(query));
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex.Errors);
+            }
+            catch
+            {
+                return StatusCode(500);
+            }
         }
     }
 }
