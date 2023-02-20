@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using MediatR;
 
 namespace RadencyLibrary.Common.Behaviours
 {
@@ -16,6 +17,10 @@ namespace RadencyLibrary.Common.Behaviours
             try
             {
                 return await next();
+            }
+            catch (ValidationException ex)
+            {
+                throw ex;
             }
             catch (Exception ex)
             {

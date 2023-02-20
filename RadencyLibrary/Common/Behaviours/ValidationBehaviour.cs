@@ -30,6 +30,7 @@ namespace RadencyLibrary.Common.Behaviours
 
                 if (failures.Any())
                     throw new ValidationException(failures);
+
             }
             return await next();
         }
