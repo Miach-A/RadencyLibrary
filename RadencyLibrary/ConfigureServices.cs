@@ -25,7 +25,12 @@ public static class ConfigureServices
 
         services.AddControllers();
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
+        services.AddSwaggerGen(cfg =>
+        {
+            var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            cfg.IncludeXmlComments(xmlPath);
+        });
         services.AddValidatorsFromAssembly(assembly);
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(assembly));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
