@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using RadencyLibrary.CQRS.Book.Dto;
 using RadencyLibraryInfrastructure.Persistence;
 using System.Linq.Dynamic.Core;
 

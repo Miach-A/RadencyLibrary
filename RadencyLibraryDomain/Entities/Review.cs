@@ -6,5 +6,6 @@
         public Book Book { get; set; } = null!;
         public int BookId { get; set; }
         public string Reviewer { get; set; } = string.Empty;
+        public string Message { get; set; } = string.Empty;
     }
 }

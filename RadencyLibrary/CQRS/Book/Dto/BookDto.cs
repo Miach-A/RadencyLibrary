@@ -1,4 +1,4 @@
-﻿namespace RadencyLibrary.CQRS.Book.Queries.GetAllBooks
+﻿namespace RadencyLibrary.CQRS.Book.Dto
 {
     public class BookDto
     {
