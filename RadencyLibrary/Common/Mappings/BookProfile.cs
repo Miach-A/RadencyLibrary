@@ -14,11 +14,17 @@ namespace RadencyLibrary.Common.Mappings
                         x => x.Ratings.Count() > 0
                         ? Convert.ToDecimal(x.Ratings.Average(y => y.Score))
                         : 0))
-                .ForMember(x => x.ReviwsNumber,
+                .ForMember(x => x.ReviewsNumber,
                     y => y.MapFrom(x => x.Ratings.Count()));
 
             CreateMap<Book, BookDetailsDto>()
+                .ForMember(x => x.Rating,
+                    y => y.MapFrom(
+                        x => x.Ratings.Count() > 0
+                        ? Convert.ToDecimal(x.Ratings.Average(y => y.Score))
+                        : 0));
 
+            CreateMap<Review, ReviewDto>();
         }
     }
 }

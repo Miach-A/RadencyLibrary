@@ -1,6 +1,4 @@
-﻿using RadencyLibraryDomain.Entities;
-
-namespace RadencyLibrary.CQRS.Book.Dto
+﻿namespace RadencyLibrary.CQRS.Book.Dto
 {
     public class BookDetailsDto
     {
@@ -10,6 +8,6 @@ namespace RadencyLibrary.CQRS.Book.Dto
         public string Cover { get; set; } = string.Empty;
         public string Content { get; set; } = string.Empty;
         public decimal Rating { get; set; }
-        public ICollection<Review> Reviws { get; set; } = null!;
+        public ICollection<ReviewDto> Reviews { get; set; } = null!;
     }
 }

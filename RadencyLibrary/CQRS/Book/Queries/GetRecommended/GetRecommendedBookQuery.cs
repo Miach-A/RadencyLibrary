@@ -31,7 +31,7 @@ namespace RadencyLibrary.CQRS.Book.Queries.GetRecommended
                 .Include(x => x.Reviews)
                 .Include(x => x.Ratings)
                 .ProjectTo<BookDto>(_mapper.ConfigurationProvider)
-                .Where(x => x.ReviwsNumber > 10)
+                .Where(x => x.ReviewsNumber > 10)
                 .OrderByDescending(x => x.Rating)
                 .Take(10)
                 .ToListAsync(cancellationToken);
