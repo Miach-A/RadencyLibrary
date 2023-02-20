@@ -2,12 +2,12 @@
 using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using RadencyLibrary.CQRS.Book.Dto;
+using RadencyLibrary.CQRS.BookCq.Dto;
 using RadencyLibraryInfrastructure.Persistence;
 
-namespace RadencyLibrary.CQRS.Book.Queries.GetDetails
+namespace RadencyLibrary.CQRS.BookCq.Queries.GetDetails
 {
-    public class GetBookDetailsQuery : IRequest<BookDetailsDto>
+    public record GetBookDetailsQuery : IRequest<BookDetailsDto>
     {
         public GetBookDetailsQuery(int id)
         {
@@ -29,7 +29,7 @@ namespace RadencyLibrary.CQRS.Book.Queries.GetDetails
         }
         public async Task<BookDetailsDto?> Handle(GetBookDetailsQuery request, CancellationToken cancellationToken)
         {
-            return await _context.Books
+            return await _context.Books.AsNoTracking()
                 .Where(x => x.Id == request.Id)
                 .ProjectTo<BookDetailsDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync();

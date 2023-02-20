@@ -2,12 +2,12 @@
 using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using RadencyLibrary.CQRS.Book.Dto;
+using RadencyLibrary.CQRS.BookCq.Dto;
 using RadencyLibraryInfrastructure.Persistence;
 
-namespace RadencyLibrary.CQRS.Book.Queries.GetRecommended
+namespace RadencyLibrary.CQRS.BookCq.Queries.GetRecommended
 {
-    public class GetRecommendedBookQuery : IRequest<IEnumerable<BookDto>>
+    public record GetRecommendedBookQuery : IRequest<IEnumerable<BookDto>>
     {
         public string? Genre { get; set; }
     }
@@ -26,7 +26,7 @@ namespace RadencyLibrary.CQRS.Book.Queries.GetRecommended
         }
         public async Task<IEnumerable<BookDto>> Handle(GetRecommendedBookQuery request, CancellationToken cancellationToken)
         {
-            return await _context.Books
+            return await _context.Books.AsNoTracking()
                 .Where(x => request.Genre == null ? true : x.Genre.ToLower() == request.Genre.ToLower())
                 .Include(x => x.Reviews)
                 .Include(x => x.Ratings)

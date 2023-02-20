@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using RadencyLibrary.CQRS.Book.Dto;
+using RadencyLibrary.CQRS.BookCq.Dto;
 using RadencyLibraryDomain.Entities;
 
 namespace RadencyLibrary.Common.Mappings

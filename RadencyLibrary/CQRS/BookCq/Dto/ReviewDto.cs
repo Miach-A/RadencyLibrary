@@ -1,4 +1,4 @@
-﻿namespace RadencyLibrary.CQRS.Book.Dto
+﻿namespace RadencyLibrary.CQRS.BookCq.Dto
 {
     public class ReviewDto
     {

@@ -2,10 +2,10 @@
 using FluentValidation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using RadencyLibrary.CQRS.Book.Dto;
-using RadencyLibrary.CQRS.Book.Queries.GetAllBooks;
 using RadencyLibrary.CQRS.Book.Queries.GetDetails;
-using RadencyLibrary.CQRS.Book.Queries.GetRecommended;
+using RadencyLibrary.CQRS.BookCq.Dto;
+using RadencyLibrary.CQRS.BookCq.Queries.GetAll;
+using RadencyLibrary.CQRS.BookCq.Queries.GetRecommended;
 
 namespace RadencyLibrary.Controllers
 {

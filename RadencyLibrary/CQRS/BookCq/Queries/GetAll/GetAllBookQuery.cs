@@ -2,13 +2,13 @@
 using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using RadencyLibrary.CQRS.Book.Dto;
+using RadencyLibrary.CQRS.BookCq.Dto;
 using RadencyLibraryInfrastructure.Persistence;
 using System.Linq.Dynamic.Core;
 
-namespace RadencyLibrary.CQRS.Book.Queries.GetAllBooks
+namespace RadencyLibrary.CQRS.BookCq.Queries.GetAll
 {
-    public class GetAllBookQuery : IRequest<IEnumerable<BookDto>>
+    public record GetAllBookQuery : IRequest<IEnumerable<BookDto>>
     {
         public string? Order { get; set; }
     }
@@ -26,7 +26,7 @@ namespace RadencyLibrary.CQRS.Book.Queries.GetAllBooks
         }
         public async Task<IEnumerable<BookDto>> Handle(GetAllBookQuery request, CancellationToken cancellationToken)
         {
-            var queryBooks = _context.Books
+            var queryBooks = _context.Books.AsNoTracking()
                 .Include(x => x.Reviews)
                 .Include(x => x.Ratings)
                 .AsQueryable();

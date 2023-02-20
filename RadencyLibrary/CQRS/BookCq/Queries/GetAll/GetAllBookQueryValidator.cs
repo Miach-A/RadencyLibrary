@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace RadencyLibrary.CQRS.Book.Queries.GetAllBooks
+namespace RadencyLibrary.CQRS.BookCq.Queries.GetAll
 {
     public class GetAllBookQueryValidator : AbstractValidator<GetAllBookQuery>
     {
