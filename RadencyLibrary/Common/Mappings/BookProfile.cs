@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using RadencyLibrary.CQRS.BookCq.Commands.Save;
 using RadencyLibrary.CQRS.BookCq.Dto;
 using RadencyLibraryDomain.Entities;
 
@@ -25,6 +26,8 @@ namespace RadencyLibrary.Common.Mappings
                         : 0));
 
             CreateMap<Review, ReviewDto>();
+
+            CreateMap<SaveBookCommand, Book>();
         }
     }
 }

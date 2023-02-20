@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using RadencyLibraryDomain.Entities;
 using RadencyLibraryInfrastructure.Persistence;
@@ -31,7 +33,10 @@ namespace RadencyLibrary.CQRS.BookCq.Commands.Delete
         {
             if (request.Secret != _configuration.GetValue<string>("BooksApi:Secret"))
             {
-                return;
+                throw new ValidationException("secret incorrect",
+                    new List<ValidationFailure>() {
+                        new ValidationFailure("secret", "secret incorrect")
+                    });
             }
 
             var book = _context.Books.Attach(new Book { Id = request.Id });

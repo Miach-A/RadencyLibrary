@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RadencyLibrary.CQRS.BookCq.Commands.Delete;
+using RadencyLibrary.CQRS.BookCq.Commands.Save;
 using RadencyLibrary.CQRS.BookCq.Dto;
 using RadencyLibrary.CQRS.BookCq.Queries.GetAll;
 using RadencyLibrary.CQRS.BookCq.Queries.GetDetails;
@@ -41,9 +42,11 @@ namespace RadencyLibrary.Controllers
         /// Get top 10 books with high rating and number of reviews greater than 10. You can filter books by specifying genre. Order by rating
         /// </summary>
         /// <responce code="200">Success</responce>
+        /// <responce code="400">BadRequest</responce>
         [HttpGet]
         [Route("/api/recommended")]
         [ProducesResponseType(typeof(IEnumerable<BookDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<ValidationFailure>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Recommended([FromQuery] GetRecommendedBookQuery query)
         {
             try
@@ -60,9 +63,11 @@ namespace RadencyLibrary.Controllers
         /// Get book details with the list of reviews
         /// </summary>
         /// <responce code="200">Success</responce>
+        /// <responce code="400">BadRequest</responce>
         [HttpGet]
         [Route("/api/books/{id}")]
         [ProducesResponseType(typeof(IEnumerable<BookDetailsDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<ValidationFailure>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> BookDetails(int id)
         {
             try
@@ -70,7 +75,7 @@ namespace RadencyLibrary.Controllers
                 var res = await Mediator.Send(new GetBookDetailsQuery(id));
                 if (res == null)
                 {
-                    return BadRequest("id does not exist");
+                    return BadRequest(new ValidationFailure("id", "id does not exist"));
                 }
                 return Ok(res);
             }
@@ -84,9 +89,11 @@ namespace RadencyLibrary.Controllers
         /// Delete a book using a secret key
         /// </summary>
         /// <responce code="200">Success</responce>
+        /// <responce code="400">BadRequest</responce>
         [HttpDelete]
         [Route("/api/books/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<ValidationFailure>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> BookDelete(int id, [FromQuery] string secret)
         {
             try
@@ -100,7 +107,34 @@ namespace RadencyLibrary.Controllers
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new ValidationFailure("id", ex.Message));
+            }
+        }
+
+
+        /// <summary>
+        /// Save a new book
+        /// </summary>
+        /// <responce code="200">Success</responce>
+        /// <responce code="400">BadRequest</responce>
+        [HttpPost]
+        [Route("/api/books/save")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<ValidationFailure>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> BookSave([FromBody] SaveBookCommand query)
+        {
+            try
+            {
+                await Mediator.Send(query);
+                return Ok();
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex.Errors);
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return BadRequest(new ValidationFailure("id", ex.Message));
             }
         }
     }
