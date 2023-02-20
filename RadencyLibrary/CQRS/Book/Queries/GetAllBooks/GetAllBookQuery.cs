@@ -6,7 +6,7 @@ namespace RadencyLibrary.CQRS.Book.Queries.GetAllBooks
 {
     public class GetAllBookQuery : IRequest<IEnumerable<BookDto>>
     {
-        public string Order { get; set; } = string.Empty;
+        public string? Order { get; set; }
     }
 
     public class GetAllBookQueryHandler : IRequestHandler<GetAllBookQuery, IEnumerable<BookDto>>
@@ -22,16 +22,16 @@ namespace RadencyLibrary.CQRS.Book.Queries.GetAllBooks
             return await _context.Books
                 .Include(x => x.Reviews)
                 .Include(x => x.Ratings)
+                .OrderBy(x => request.Order == null ? string.Empty : request.Order.ToString())
                 .Select(x => new BookDto()
                 {
                     Id = x.Id,
                     Title = x.Title,
                     Author = x.Author,
-                    Rating = Convert.ToDecimal(x.Ratings.Average(y => y.Score)),
+                    Rating = x.Ratings.Count() > 0 ? Convert.ToDecimal(x.Ratings.Average(y => y.Score)) : 0,
                     ReviwsNumber = x.Reviews.Count()
 
                 })
-                //.OrderBy(x => request.Order.ToString())
                 .ToListAsync(cancellationToken);
         }
     }

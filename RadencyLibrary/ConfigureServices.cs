@@ -28,7 +28,7 @@ public static class ConfigureServices
         services.AddSwaggerGen();
         services.AddValidatorsFromAssembly(assembly);
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(assembly));
-        //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 
         return services;

@@ -6,7 +6,11 @@ namespace RadencyLibrary.CQRS.Book.Queries.GetAllBooks
     {
         public GetAllBookQueryValidator()
         {
-            RuleFor(x => x.Order).IsEnumName(typeof(Order), false);
+            When(x => x.Order != null, () =>
+            {
+                RuleFor(x => x.Order).IsEnumName(typeof(Order), false);
+            });
+
         }
     }
 
