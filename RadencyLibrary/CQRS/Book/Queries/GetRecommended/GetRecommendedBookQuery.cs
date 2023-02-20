@@ -21,7 +21,7 @@ namespace RadencyLibrary.CQRS.Book.Queries.GetRecommended
         public async Task<IEnumerable<BookDto>> Handle(GetRecommendedBookQuery request, CancellationToken cancellationToken)
         {
             var queryBooks = _context.Books
-                .Where(x => request.Genre == null ? true : x.Genre == request.Genre)
+                .Where(x => request.Genre == null ? true : x.Genre.ToLower() == request.Genre.ToLower())
                 .Include(x => x.Reviews)
                 .Include(x => x.Ratings)
                 .Select(x => new BookDto()
