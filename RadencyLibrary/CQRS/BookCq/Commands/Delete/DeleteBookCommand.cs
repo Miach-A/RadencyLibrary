@@ -7,9 +7,10 @@ namespace RadencyLibrary.CQRS.BookCq.Commands.Delete
 {
     public record DeleteBookCommand : IRequest
     {
-        public DeleteBookCommand()//int id)
+        public DeleteBookCommand(int id, string secret)
         {
-            //Id = id;
+            Id = id;
+            Secret = secret;
         }
         public int Id { get; set; }
         public string Secret { get; set; } = string.Empty;

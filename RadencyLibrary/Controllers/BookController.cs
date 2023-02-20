@@ -2,9 +2,10 @@
 using FluentValidation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using RadencyLibrary.CQRS.Book.Queries.GetDetails;
+using RadencyLibrary.CQRS.BookCq.Commands.Delete;
 using RadencyLibrary.CQRS.BookCq.Dto;
 using RadencyLibrary.CQRS.BookCq.Queries.GetAll;
+using RadencyLibrary.CQRS.BookCq.Queries.GetDetails;
 using RadencyLibrary.CQRS.BookCq.Queries.GetRecommended;
 
 namespace RadencyLibrary.Controllers
@@ -60,7 +61,7 @@ namespace RadencyLibrary.Controllers
         /// <responce code="200">Success</responce>
         [HttpGet]
         [Route("/api/books/{id}")]
-        [ProducesResponseType(typeof(IEnumerable<BookDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<BookDetailsDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> BookDetails(int id)
         {
             try
@@ -71,6 +72,26 @@ namespace RadencyLibrary.Controllers
                     return BadRequest("id does not exist");
                 }
                 return Ok(res);
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex.Errors);
+            }
+        }
+
+        /// <summary>
+        /// Delete a book using a secret key
+        /// </summary>
+        /// <responce code="200">Success</responce>
+        [HttpDelete]
+        [Route("/api/books/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> BookDelete(int id, [FromQuery] string secret)
+        {
+            try
+            {
+                await Mediator.Send(new DeleteBookCommand(id, secret));
+                return Ok();
             }
             catch (ValidationException ex)
             {
