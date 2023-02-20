@@ -19,6 +19,7 @@ namespace RadencyLibrary.Controllers
         /// <responce code="400">BadRequest</responce>
 
         [HttpGet]
+        [Route("/api/books")]
         [ProducesResponseType(typeof(IEnumerable<BookDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(IEnumerable<ValidationFailure>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Books([FromQuery] GetAllBookQuery query)
@@ -42,6 +43,7 @@ namespace RadencyLibrary.Controllers
         /// </summary>
         /// <responce code="200">Success</responce>
         [HttpGet]
+        [Route("/api/recommended")]
         [ProducesResponseType(typeof(IEnumerable<BookDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Recommended([FromQuery] GetRecommendedBookQuery query)
         {

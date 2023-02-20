@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace RadencyLibrary.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     public abstract class ApiControllerBase : ControllerBase
     {
         private ISender _mediator = null!;
