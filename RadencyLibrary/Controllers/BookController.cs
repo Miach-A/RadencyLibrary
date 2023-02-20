@@ -2,6 +2,7 @@
 using FluentValidation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RadencyLibrary.CQRS.BookCq.Commands.Delete;
 using RadencyLibrary.CQRS.BookCq.Dto;
 using RadencyLibrary.CQRS.BookCq.Queries.GetAll;
@@ -96,6 +97,10 @@ namespace RadencyLibrary.Controllers
             catch (ValidationException ex)
             {
                 return BadRequest(ex.Errors);
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }

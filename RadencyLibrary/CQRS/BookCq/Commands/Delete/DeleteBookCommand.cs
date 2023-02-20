@@ -36,7 +36,9 @@ namespace RadencyLibrary.CQRS.BookCq.Commands.Delete
 
             var book = _context.Books.Attach(new Book { Id = request.Id });
             book.State = EntityState.Deleted;
+
             await _context.SaveChangesAsync();
+
             return;
         }
     }

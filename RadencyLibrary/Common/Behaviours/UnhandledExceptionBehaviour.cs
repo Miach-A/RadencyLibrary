@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace RadencyLibrary.Common.Behaviours
 {
@@ -17,6 +18,14 @@ namespace RadencyLibrary.Common.Behaviours
             try
             {
                 return await next();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                var requestName = typeof(TRequest).Name;
+
+                _logger.LogError(ex, "Radency library request: Update database Exeption for Request {Name} {@Request}", requestName, request);
+
+                throw;
             }
             catch (ValidationException ex)
             {
