@@ -57,6 +57,26 @@ namespace RadencyLibrary.Controllers
             }
         }
 
+        /// <summary>
+        /// Get book details with the list of reviews
+        /// </summary>
+        /// <responce code="200">Success</responce>
+        [HttpGet]
+        [Route("/api/books/{id}")]
+        [ProducesResponseType(typeof(IEnumerable<BookDto>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> BookDetails(int id)
+        {
+            //    try
+            //    {
+            //        return Ok(await Mediator.Send(query));
+            //    }
+            //    catch
+            //    {
+            //        return StatusCode(500);
+            //    }
+            //}
+            return Ok();
 
+        }
     }
 }

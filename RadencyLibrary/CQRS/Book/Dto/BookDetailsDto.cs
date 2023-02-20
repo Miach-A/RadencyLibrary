@@ -1,6 +1,6 @@
 ﻿namespace RadencyLibrary.CQRS.Book.Dto
 {
-    public class BookDto
+    public class BookDetailsDto
     {
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;

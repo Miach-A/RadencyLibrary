@@ -22,6 +22,7 @@ public static class ConfigureServices
 
         maperConfig.AssertConfigurationIsValid();
         var mapper = maperConfig.CreateMapper();
+        services.AddSingleton<IMapper>(mapper);
 
         services.AddControllers();
         services.AddEndpointsApiExplorer();

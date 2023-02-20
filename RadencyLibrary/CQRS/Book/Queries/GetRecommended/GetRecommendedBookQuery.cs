@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using RadencyLibrary.CQRS.Book.Dto;
 using RadencyLibraryInfrastructure.Persistence;
@@ -13,30 +15,26 @@ namespace RadencyLibrary.CQRS.Book.Queries.GetRecommended
     public class GetAllBookQueryHandler : IRequestHandler<GetRecommendedBookQuery, IEnumerable<BookDto>>
     {
         private readonly LibraryDbContext _context;
+        private readonly IMapper _mapper;
+
         public GetAllBookQueryHandler(
+            IMapper mapper,
             LibraryDbContext context)
         {
             _context = context;
+            _mapper = mapper;
         }
         public async Task<IEnumerable<BookDto>> Handle(GetRecommendedBookQuery request, CancellationToken cancellationToken)
         {
-            var queryBooks = _context.Books
+            return await _context.Books
                 .Where(x => request.Genre == null ? true : x.Genre.ToLower() == request.Genre.ToLower())
                 .Include(x => x.Reviews)
                 .Include(x => x.Ratings)
-                .Select(x => new BookDto()
-                {
-                    Id = x.Id,
-                    Title = x.Title,
-                    Author = x.Author,
-                    Rating = x.Ratings.Count() > 0 ? Convert.ToDecimal(x.Ratings.Average(y => y.Score)) : 0,
-                    ReviwsNumber = x.Reviews.Count()
-                })
+                .ProjectTo<BookDto>(_mapper.ConfigurationProvider)
                 .Where(x => x.ReviwsNumber > 10)
                 .OrderByDescending(x => x.Rating)
-                .Take(10);
-
-            return await queryBooks.ToListAsync(cancellationToken);
+                .Take(10)
+                .ToListAsync(cancellationToken);
         }
     }
 }

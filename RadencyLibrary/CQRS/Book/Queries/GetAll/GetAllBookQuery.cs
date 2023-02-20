@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using RadencyLibrary.CQRS.Book.Dto;
 using RadencyLibraryInfrastructure.Persistence;
@@ -14,10 +16,13 @@ namespace RadencyLibrary.CQRS.Book.Queries.GetAllBooks
     public class GetAllBookQueryHandler : IRequestHandler<GetAllBookQuery, IEnumerable<BookDto>>
     {
         private readonly LibraryDbContext _context;
+        private readonly IMapper _mapper;
         public GetAllBookQueryHandler(
-            LibraryDbContext context)
+            LibraryDbContext context,
+            IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
         public async Task<IEnumerable<BookDto>> Handle(GetAllBookQuery request, CancellationToken cancellationToken)
         {
@@ -28,17 +33,7 @@ namespace RadencyLibrary.CQRS.Book.Queries.GetAllBooks
 
             var orderedQueryBooks = request.Order != null ? queryBooks.OrderBy(request.Order.ToString()) : queryBooks;
 
-            var query = orderedQueryBooks.Select(x => new BookDto()
-            {
-                Id = x.Id,
-                Title = x.Title,
-                Author = x.Author,
-                Rating = x.Ratings.Count() > 0 ? Convert.ToDecimal(x.Ratings.Average(y => y.Score)) : 0,
-                ReviwsNumber = x.Reviews.Count()
-
-            });
-
-            return await query.ToListAsync(cancellationToken);
+            return await orderedQueryBooks.ProjectTo<BookDto>(_mapper.ConfigurationProvider).ToListAsync(cancellationToken);
         }
     }
 }
