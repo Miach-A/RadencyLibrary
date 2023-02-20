@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using RadencyLibraryInfrastructure.Persistence;
+using System.Linq.Dynamic.Core;
 
 namespace RadencyLibrary.CQRS.Book.Queries.GetAllBooks
 {
@@ -19,20 +20,24 @@ namespace RadencyLibrary.CQRS.Book.Queries.GetAllBooks
         }
         public async Task<IEnumerable<BookDto>> Handle(GetAllBookQuery request, CancellationToken cancellationToken)
         {
-            return await _context.Books
+            var queryBooks = _context.Books
                 .Include(x => x.Reviews)
                 .Include(x => x.Ratings)
-                .OrderBy(x => request.Order == null ? string.Empty : request.Order.ToString())
-                .Select(x => new BookDto()
-                {
-                    Id = x.Id,
-                    Title = x.Title,
-                    Author = x.Author,
-                    Rating = x.Ratings.Count() > 0 ? Convert.ToDecimal(x.Ratings.Average(y => y.Score)) : 0,
-                    ReviwsNumber = x.Reviews.Count()
+                .AsQueryable();
 
-                })
-                .ToListAsync(cancellationToken);
+            var orderedQueryBooks = request.Order != null ? queryBooks.OrderBy(request.Order.ToString()) : queryBooks;
+
+            var query = orderedQueryBooks.Select(x => new BookDto()
+            {
+                Id = x.Id,
+                Title = x.Title,
+                Author = x.Author,
+                Rating = x.Ratings.Count() > 0 ? Convert.ToDecimal(x.Ratings.Average(y => y.Score)) : 0,
+                ReviwsNumber = x.Reviews.Count()
+
+            });
+
+            return await query.ToListAsync(cancellationToken);
         }
     }
 }

@@ -10,13 +10,9 @@ namespace RadencyLibrary.Common.Extensions
             using (var scope = app.Services.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<LibraryDbContext>();
+                //context.Database.EnsureCreated();
                 context.SeedLibrary();
             }
-            //if (app.Services.GetService(typeof(LibraryDbContext)) is LibraryDbContext context)
-            //{
-            //    context.Database.EnsureCreated();
-            //    context.SeedLibrary();
-            //}
         }
     }
 }
