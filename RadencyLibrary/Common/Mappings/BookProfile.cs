@@ -17,6 +17,8 @@ namespace RadencyLibrary.Common.Mappings
                 .ForMember(x => x.ReviwsNumber,
                     y => y.MapFrom(x => x.Ratings.Count()));
 
+            CreateMap<Book, BookDetailsDto>()
+
         }
     }
 }

@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RadencyLibrary.CQRS.Book.Dto;
 using RadencyLibrary.CQRS.Book.Queries.GetAllBooks;
+using RadencyLibrary.CQRS.Book.Queries.GetDetails;
 using RadencyLibrary.CQRS.Book.Queries.GetRecommended;
 
 namespace RadencyLibrary.Controllers
@@ -32,10 +33,6 @@ namespace RadencyLibrary.Controllers
             {
                 return BadRequest(ex.Errors);
             }
-            catch
-            {
-                return StatusCode(500);
-            }
         }
 
         /// <summary>
@@ -51,9 +48,9 @@ namespace RadencyLibrary.Controllers
             {
                 return Ok(await Mediator.Send(query));
             }
-            catch
+            catch (ValidationException ex)
             {
-                return StatusCode(500);
+                return BadRequest(ex.Errors);
             }
         }
 
@@ -66,17 +63,19 @@ namespace RadencyLibrary.Controllers
         [ProducesResponseType(typeof(IEnumerable<BookDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> BookDetails(int id)
         {
-            //    try
-            //    {
-            //        return Ok(await Mediator.Send(query));
-            //    }
-            //    catch
-            //    {
-            //        return StatusCode(500);
-            //    }
-            //}
-            return Ok();
-
+            try
+            {
+                var res = await Mediator.Send(new GetBookDetailsQuery(id));
+                if (res == null)
+                {
+                    return BadRequest("id does not exist");
+                }
+                return Ok(res);
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex.Errors);
+            }
         }
     }
 }
