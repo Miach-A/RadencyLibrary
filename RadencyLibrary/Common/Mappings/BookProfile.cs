@@ -18,7 +18,7 @@ namespace RadencyLibrary.Common.Mappings
                         ? Convert.ToDecimal(x.Ratings.Average(y => y.Score))
                         : 0))
                 .ForMember(x => x.ReviewsNumber,
-                    y => y.MapFrom(x => x.Ratings.Count()));
+                    y => y.MapFrom(x => x.Reviews.Count()));
 
             CreateMap<Book, BookDetailsDto>()
                 .ForMember(x => x.Rating,
