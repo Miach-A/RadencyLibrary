@@ -1,10 +1,13 @@
 ﻿using FluentValidation;
+using FluentValidation.Results;
 using MediatR;
+using RadencyLibrary.CQRS.Base;
 
 namespace RadencyLibrary.Common.Behaviours
 {
     public class ValidationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-         where TRequest : notnull
+        where TRequest : notnull
+        where TResponse : IValidatedResponse<ValidationFailure>
     {
         private readonly IEnumerable<IValidator<TRequest>> _validators;
 
@@ -29,7 +32,14 @@ namespace RadencyLibrary.Common.Behaviours
                     .ToList();
 
                 if (failures.Any())
-                    throw new ValidationException(failures);
+                {
+                    //throw new ValidationException(failures);
+                    var responce = (TResponse)Activator.CreateInstance(typeof(TResponse))!;
+                    responce.Validated = false;
+                    responce.Errors = failures;
+                    return responce;
+                }
+
 
             }
             return await next();

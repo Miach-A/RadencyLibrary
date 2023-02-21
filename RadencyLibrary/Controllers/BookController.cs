@@ -1,8 +1,6 @@
-﻿using FluentValidation;
-using FluentValidation.Results;
+﻿using FluentValidation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using RadencyLibrary.CQRS.BookCq.Commands.Delete;
 using RadencyLibrary.CQRS.BookCq.Commands.Save;
 using RadencyLibrary.CQRS.BookCq.Dto;
@@ -28,14 +26,20 @@ namespace RadencyLibrary.Controllers
         [ProducesResponseType(typeof(IEnumerable<ValidationFailure>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Books([FromQuery] GetAllBookQuery query)
         {
-            try
+            var responce = await Mediator.Send(query);
+            if (!responce.Validated)
             {
-                return Ok(await Mediator.Send(query));
+                return BadRequest(responce.Errors);
             }
-            catch (ValidationException ex)
-            {
-                return BadRequest(ex.Errors);
-            }
+            return Ok(responce.Result);
+            //try
+            //{
+            //    return Ok(await Mediator.Send(query));
+            //}
+            //catch (ValidationException ex)
+            //{
+            //    return BadRequest(ex.Errors);
+            //}
         }
 
         /// <summary>
@@ -49,14 +53,20 @@ namespace RadencyLibrary.Controllers
         [ProducesResponseType(typeof(IEnumerable<ValidationFailure>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Recommended([FromQuery] GetRecommendedBookQuery query)
         {
-            try
+            var responce = await Mediator.Send(query);
+            if (!responce.Validated)
             {
-                return Ok(await Mediator.Send(query));
+                return BadRequest(responce.Errors);
             }
-            catch (ValidationException ex)
-            {
-                return BadRequest(ex.Errors);
-            }
+            return Ok(responce.Result);
+            //try
+            //{
+            //    return Ok(await Mediator.Send(query));
+            //}
+            //catch (ValidationException ex)
+            //{
+            //    return BadRequest(ex.Errors);
+            //}
         }
 
         /// <summary>
@@ -70,19 +80,27 @@ namespace RadencyLibrary.Controllers
         [ProducesResponseType(typeof(IEnumerable<ValidationFailure>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> BookDetails(int id)
         {
-            try
+
+            var responce = await Mediator.Send(new GetBookDetailsQuery(id));
+            if (!responce.Validated)
             {
-                var res = await Mediator.Send(new GetBookDetailsQuery(id));
-                if (res == null)
-                {
-                    return BadRequest(new ValidationFailure("id", "id does not exist"));
-                }
-                return Ok(res);
+                return BadRequest(responce.Errors);
             }
-            catch (ValidationException ex)
-            {
-                return BadRequest(ex.Errors);
-            }
+            return Ok(responce.Result);
+
+            //try
+            //{
+            //    var res = await Mediator.Send(new GetBookDetailsQuery(id));
+            //    if (res == null)
+            //    {
+            //        return BadRequest(new ValidationFailure("id", "id does not exist"));
+            //    }
+            //    return Ok(res);
+            //}
+            //catch (ValidationException ex)
+            //{
+            //    return BadRequest(ex.Errors);
+            //}
         }
 
         /// <summary>
@@ -96,19 +114,26 @@ namespace RadencyLibrary.Controllers
         [ProducesResponseType(typeof(IEnumerable<ValidationFailure>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> BookDelete(int id, [FromQuery] string secret)
         {
-            try
+            var responce = await Mediator.Send(new DeleteBookCommand(id, secret));
+            if (!responce.Validated)
             {
-                await Mediator.Send(new DeleteBookCommand(id, secret));
-                return Ok();
+                return BadRequest(responce.Errors);
             }
-            catch (ValidationException ex)
-            {
-                return BadRequest(ex.Errors);
-            }
-            catch (DbUpdateConcurrencyException ex)
-            {
-                return BadRequest(new ValidationFailure("id", ex.Message));
-            }
+            return Ok(responce.Result);
+
+            //try
+            //{
+            //    await Mediator.Send(new DeleteBookCommand(id, secret));
+            //    return Ok();
+            //}
+            //catch (ValidationException ex)
+            //{
+            //    return BadRequest(ex.Errors);
+            //}
+            //catch (DbUpdateConcurrencyException ex)
+            //{
+            //    return BadRequest(new ValidationFailure("id", ex.Message));
+            //}
         }
 
 
@@ -123,19 +148,26 @@ namespace RadencyLibrary.Controllers
         [ProducesResponseType(typeof(IEnumerable<ValidationFailure>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> BookSave([FromBody] SaveBookCommand query)
         {
-            try
+
+            var responce = await Mediator.Send(query);
+            if (!responce.Validated)
             {
-                await Mediator.Send(query);
-                return Ok();
+                return BadRequest(responce.Errors);
             }
-            catch (ValidationException ex)
-            {
-                return BadRequest(ex.Errors);
-            }
-            catch (DbUpdateConcurrencyException ex)
-            {
-                return BadRequest(new ValidationFailure("id", ex.Message));
-            }
+            return Ok(responce.Result);
+            //try
+            //{
+            //    await Mediator.Send(query);
+            //    return Ok();
+            //}
+            //catch (ValidationException ex)
+            //{
+            //    return BadRequest(ex.Errors);
+            //}
+            //catch (DbUpdateConcurrencyException ex)
+            //{
+            //    return BadRequest(new ValidationFailure("id", ex.Message));
+            //}
         }
     }
 }

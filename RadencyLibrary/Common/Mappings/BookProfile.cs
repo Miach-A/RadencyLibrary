@@ -27,7 +27,9 @@ namespace RadencyLibrary.Common.Mappings
 
             CreateMap<Review, ReviewDto>();
 
-            CreateMap<SaveBookCommand, Book>();
+            CreateMap<SaveBookCommand, Book>()
+                .ForMember(x => x.Reviews, y => y.Ignore())
+                .ForMember(x => x.Ratings, y => y.Ignore());
         }
     }
 }

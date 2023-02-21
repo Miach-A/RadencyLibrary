@@ -3,6 +3,7 @@ using FluentValidation;
 using MediatR;
 using RadencyLibrary.Common.Behaviours;
 using RadencyLibrary.Common.Mappings;
+using RadencyLibrary.CQRS.Base;
 using System.Reflection;
 
 
@@ -36,6 +37,8 @@ public static class ConfigureServices
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(assembly));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+
+        services.AddTransient(typeof(Response<,>));
 
         return services;
     }

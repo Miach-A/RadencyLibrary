@@ -1,30 +1,36 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using FluentValidation.Results;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using RadencyLibrary.CQRS.Base;
 using RadencyLibrary.CQRS.BookCq.Dto;
 using RadencyLibraryInfrastructure.Persistence;
 using System.Linq.Dynamic.Core;
 
 namespace RadencyLibrary.CQRS.BookCq.Queries.GetAll
 {
-    public record GetAllBookQuery : IRequest<IEnumerable<BookDto>>
+    public record GetAllBookQuery : IRequest<Response<IEnumerable<BookDto>, ValidationFailure>>
     {
         public string? Order { get; set; }
     }
 
-    public class GetAllBookQueryHandler : IRequestHandler<GetAllBookQuery, IEnumerable<BookDto>>
+    public class GetAllBookQueryHandler : IRequestHandler<GetAllBookQuery, Response<IEnumerable<BookDto>, ValidationFailure>>
     {
         private readonly LibraryDbContext _context;
         private readonly IMapper _mapper;
+        private readonly Response<IEnumerable<BookDto>, ValidationFailure> _responce;
+
         public GetAllBookQueryHandler(
             LibraryDbContext context,
-            IMapper mapper)
+            IMapper mapper,
+            Response<IEnumerable<BookDto>, ValidationFailure> responce)
         {
             _context = context;
             _mapper = mapper;
+            _responce = responce;
         }
-        public async Task<IEnumerable<BookDto>> Handle(GetAllBookQuery request, CancellationToken cancellationToken)
+        public async Task<Response<IEnumerable<BookDto>, ValidationFailure>> Handle(GetAllBookQuery request, CancellationToken cancellationToken)
         {
             var queryBooks = _context.Books.AsNoTracking()
                 .Include(x => x.Reviews)
@@ -33,7 +39,9 @@ namespace RadencyLibrary.CQRS.BookCq.Queries.GetAll
 
             var orderedQueryBooks = request.Order != null ? queryBooks.OrderBy(request.Order.ToString()) : queryBooks;
 
-            return await orderedQueryBooks.ProjectTo<BookDto>(_mapper.ConfigurationProvider).ToListAsync(cancellationToken);
+            _responce.Result = await orderedQueryBooks.ProjectTo<BookDto>(_mapper.ConfigurationProvider).ToListAsync(cancellationToken);
+
+            return _responce;
         }
     }
 }
