@@ -18,7 +18,15 @@ namespace RadencyLibrary.Common.Extensions
                 new() {Id = 2, Author = "George Martin", Title = "A Song of Ice and Fire", Genre = "Fantasy"},
                 new() {Id = 3, Author = "Susanna Clarke", Title = "Jonathan Strange & Mr Norrell", Genre = "Fantasy"},
                 new() {Id = 4, Author = "Neil Gaiman", Title = "American Gods" , Genre = "Fantasy"},
-                new() {Id = 5, Author = "Robin Hobb", Title = "Assassin’s Apprentice", Genre = "Fantasy"}
+                new() {Id = 5, Author = "Robin Hobb", Title = "Assassin’s Apprentice", Genre = "Fantasy"},
+
+                new() {Id = 6, Author = "Agatha Christie", Title = "Murder on the Orient Express", Genre = "Detective"},
+                new() {Id = 7, Author = "Arthur Conan Doyle", Title = "The Hound of the Baskervilles", Genre = "Detective"},
+                new() {Id = 8, Author = "Dashiell Hammett", Title = "The Maltese Falcon", Genre = "Detective"},
+                new() {Id = 9, Author = "Raymond Chandler ", Title = "The Big Sleep", Genre = "Detective"},
+                new() {Id = 10, Author = "Umberto Eco", Title = "The Name of the Rose", Genre = "Detective"},
+
+
                 };
 
                 var rand = new Random();
@@ -27,7 +35,7 @@ namespace RadencyLibrary.Common.Extensions
                 var ratings = new List<Rating>();
                 books.ForEach(book =>
                 {
-                    foreach (var item in Enumerable.Range(1, 40))
+                    foreach (var item in Enumerable.Range(1, 10))
                     {
                         ratings.Add(new()
                         {
@@ -43,7 +51,7 @@ namespace RadencyLibrary.Common.Extensions
                 var reviews = new List<Review>();
                 books.ForEach(book =>
                 {
-                    foreach (var item in Enumerable.Range(1, 20))
+                    foreach (var item in Enumerable.Range(1, 11))
                     {
                         reviews.Add(new()
                         {

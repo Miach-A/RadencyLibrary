@@ -29,8 +29,4 @@
     <ProjectReference Include="..\RadencyLibraryInfrastructure\RadencyLibraryInfrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Common\Exceptions\" />
-  </ItemGroup>
-
 </Project>
