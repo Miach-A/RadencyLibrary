@@ -9,7 +9,7 @@ namespace RadencyLibraryInfrastructure.Persistence.Configurations
         public void Configure(EntityTypeBuilder<Review> builder)
         {
             builder.HasKey(x => x.Id);
-            builder.HasOne(x => x.Book).WithMany(x => x.Reviews).HasForeignKey(x => x.BookId).OnDelete(DeleteBehavior.NoAction);
+            builder.HasOne(x => x.Book).WithMany(x => x.Reviews).HasForeignKey(x => x.BookId).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

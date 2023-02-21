@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RadencyLibrary.CQRS.BookCq.Commands.Delete;
+using RadencyLibrary.CQRS.BookCq.Commands.RateBook;
 using RadencyLibrary.CQRS.BookCq.Commands.ReviewBook;
 using RadencyLibrary.CQRS.BookCq.Commands.Save;
 using RadencyLibrary.CQRS.BookCq.Dto;
@@ -140,7 +141,7 @@ namespace RadencyLibrary.Controllers
         [Route("/api/books/{id}/rate")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(IEnumerable<ValidationFailure>), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> RateSave(int id, [FromBody] ReviewBookCommand query)
+        public async Task<IActionResult> RateSave(int id, [FromBody] RateBookCommand query)
         {
             query.Id = id;
             var responce = await Mediator.Send(query);
