@@ -9,7 +9,7 @@ using RadencyLibraryInfrastructure.Persistence;
 
 namespace RadencyLibrary.CQRS.BookCq.Commands.Save
 {
-    public record SaveBookCommand : IRequest<Response<SaveResult, ValidationFailure>>//SaveResult>
+    public record SaveBookCommand : IRequest<Response<SaveResult, ValidationFailure>>
     {
         public int? Id { get; set; }
         public string Title { get; set; } = string.Empty;
@@ -19,22 +19,16 @@ namespace RadencyLibrary.CQRS.BookCq.Commands.Save
         public string Author { get; set; } = string.Empty;
     }
 
-    public class SaveBookCommandHandler : IRequestHandler<SaveBookCommand, Response<SaveResult, ValidationFailure>>
+    public class SaveBookCommandHandler : CommandHandler, IRequestHandler<SaveBookCommand, Response<SaveResult, ValidationFailure>>
     {
-        private readonly LibraryDbContext _context;
-        private readonly IMapper _mapper;
         private readonly Response<SaveResult, ValidationFailure> _response;
-        private readonly ILogger<SaveBookCommand> _logger;
         public SaveBookCommandHandler(
             LibraryDbContext context,
             IMapper mapper,
             Response<SaveResult, ValidationFailure> response,
-            ILogger<SaveBookCommand> logger)
+            ILogger<SaveBookCommand> logger) : base(context, logger, mapper)
         {
-            _context = context;
-            _mapper = mapper;
             _response = response;
-            _logger = logger;
         }
         public async Task<Response<SaveResult, ValidationFailure>> Handle(SaveBookCommand request, CancellationToken cancellationToken)
         {
@@ -45,7 +39,7 @@ namespace RadencyLibrary.CQRS.BookCq.Commands.Save
                 book = _context.Books.FirstOrDefault(x => x.Id == request.Id);
                 if (book == null)
                 {
-                    UpdateError(string.Concat("Id = ", request.Id, " not exist"), request);
+                    UpdateError(string.Concat("Id = ", request.Id, " not exist"), _response, request);
                     return _response;
                 };
                 _mapper.Map(request, book);
@@ -67,23 +61,15 @@ namespace RadencyLibrary.CQRS.BookCq.Commands.Save
                 }
                 else
                 {
-                    UpdateError(string.Concat("Id = ", request.Id, " not save"), request);
+                    UpdateError(string.Concat("Id = ", request.Id, " not save"), _response, request);
                 };
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                UpdateError(ex.Message, request);
+                UpdateError(ex.Message, _response, request);
             }
 
             return _response;
-        }
-
-        private void UpdateError(string message, SaveBookCommand request)
-        {
-            _response.Validated = false;
-            _response.Errors.Add(new ValidationFailure("id", message));
-            var requestName = request.GetType().Name;
-            _logger.LogError("Radency library request: Update database Exeption for Request {Name} {@Request}", requestName, request);
         }
     }
 }

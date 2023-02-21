@@ -1,4 +1,5 @@
-﻿using FluentValidation.Results;
+﻿using AutoMapper;
+using FluentValidation.Results;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using RadencyLibrary.CQRS.Base;
@@ -18,22 +19,19 @@ namespace RadencyLibrary.CQRS.BookCq.Commands.Delete
         public string Secret { get; set; } = string.Empty;
     }
 
-    public class DeleteBookCommandHandler : IRequestHandler<DeleteBookCommand, Response<bool, ValidationFailure>>
+    public class DeleteBookCommandHandler : CommandHandler, IRequestHandler<DeleteBookCommand, Response<bool, ValidationFailure>>
     {
-        private readonly LibraryDbContext _context;
         private readonly IConfiguration _configuration;
         private readonly Response<bool, ValidationFailure> _response;
-        private readonly ILogger<DeleteBookCommand> _logger;
         public DeleteBookCommandHandler(
-            LibraryDbContext context,
             IConfiguration configuration,
+            LibraryDbContext context,
             Response<bool, ValidationFailure> response,
-            ILogger<DeleteBookCommand> logger)
+            IMapper mapper,
+            ILogger<DeleteBookCommand> logger) : base(context, logger, mapper)
         {
-            _context = context;
             _configuration = configuration;
             _response = response;
-            _logger = logger;
         }
         public async Task<Response<bool, ValidationFailure>> Handle(DeleteBookCommand request, CancellationToken cancellationToken)
         {
@@ -56,23 +54,15 @@ namespace RadencyLibrary.CQRS.BookCq.Commands.Delete
                 }
                 else
                 {
-                    DeleteError(string.Concat("Id= ", request.Id, " not deleted"), request);
+                    UpdateError(string.Concat("Id= ", request.Id, " not deleted"), _response, request);
                 }
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                DeleteError(ex.Message, request);
+                UpdateError(ex.Message, _response, request);
             }
 
             return _response;
-        }
-        private void DeleteError(string message, DeleteBookCommand request)
-        {
-            _response.Validated = false;
-            _response.Errors.Add(new ValidationFailure("id", message));
-            var requestName = request.GetType().Name;
-
-            _logger.LogError("Radency library request: Update database Exeption for Request {Name} {@Request}", requestName, request);
         }
     }
 }

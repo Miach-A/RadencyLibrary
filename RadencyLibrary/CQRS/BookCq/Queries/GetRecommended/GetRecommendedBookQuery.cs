@@ -9,7 +9,7 @@ using RadencyLibraryInfrastructure.Persistence;
 
 namespace RadencyLibrary.CQRS.BookCq.Queries.GetRecommended
 {
-    public record GetRecommendedBookQuery : IRequest<Response<IEnumerable<BookDto>, ValidationFailure>>//IEnumerable<BookDto>>
+    public record GetRecommendedBookQuery : IRequest<Response<IEnumerable<BookDto>, ValidationFailure>>
     {
         public string? Genre { get; set; }
     }

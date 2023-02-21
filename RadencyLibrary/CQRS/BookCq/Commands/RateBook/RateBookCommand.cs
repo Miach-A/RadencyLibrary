@@ -17,22 +17,16 @@ namespace RadencyLibrary.CQRS.BookCq.Commands.RateBook
         public int Score { get; set; }
     }
 
-    public class RateBookCommandHandler : IRequestHandler<RateBookCommand, Response<bool, ValidationFailure>>
+    public class RateBookCommandHandler : CommandHandler, IRequestHandler<RateBookCommand, Response<bool, ValidationFailure>>
     {
-        private readonly LibraryDbContext _context;
-        private readonly IMapper _mapper;
         private readonly Response<bool, ValidationFailure> _response;
-        private readonly ILogger<SaveBookCommand> _logger;
         public RateBookCommandHandler(
             LibraryDbContext context,
             IMapper mapper,
             Response<bool, ValidationFailure> response,
-            ILogger<SaveBookCommand> logger)
+            ILogger<SaveBookCommand> logger) : base(context, logger, mapper)
         {
-            _context = context;
-            _mapper = mapper;
             _response = response;
-            _logger = logger;
         }
         public async Task<Response<bool, ValidationFailure>> Handle(RateBookCommand request, CancellationToken cancellationToken)
         {
@@ -49,24 +43,17 @@ namespace RadencyLibrary.CQRS.BookCq.Commands.RateBook
                 }
                 else
                 {
-                    UpdateError(string.Concat("Id = ", request.Id, " not save"), request);
+                    UpdateError(string.Concat("Id = ", request.Id, " not save"), _response, request);
                 };
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                UpdateError(ex.Message, request);
+                UpdateError(ex.Message, _response, request);
             }
 
             return _response;
 
         }
 
-        private void UpdateError(string message, RateBookCommand request)
-        {
-            _response.Validated = false;
-            _response.Errors.Add(new ValidationFailure("id", message));
-            var requestName = request.GetType().Name;
-            _logger.LogError("Radency library request: Update database Exeption for Request {Name} {@Request}", requestName, request);
-        }
     }
 }
