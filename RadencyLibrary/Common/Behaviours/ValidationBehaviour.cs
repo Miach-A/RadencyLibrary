@@ -33,7 +33,6 @@ namespace RadencyLibrary.Common.Behaviours
 
                 if (failures.Any())
                 {
-                    //throw new ValidationException(failures);
                     var responce = (TResponse)Activator.CreateInstance(typeof(TResponse))!;
                     responce.Validated = false;
                     responce.Errors = failures;

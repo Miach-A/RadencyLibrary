@@ -26,10 +26,6 @@ namespace RadencyLibrary.Common.Behaviours
 
                 throw;
             }
-            //catch (ValidationException ex)
-            //{
-            //    throw ex;
-            //}
             catch (Exception ex)
             {
                 var requestName = typeof(TRequest).Name;

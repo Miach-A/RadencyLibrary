@@ -13,10 +13,7 @@ public static class ConfigureServices
         services.AddDbContext<LibraryDbContext>(options =>
           {
               options.UseInMemoryDatabase("LibraryDatabase");
-              //options.LogTo(Console.WriteLine, LogLevel.Debug);
           });
-
-
 
         return services;
     }
