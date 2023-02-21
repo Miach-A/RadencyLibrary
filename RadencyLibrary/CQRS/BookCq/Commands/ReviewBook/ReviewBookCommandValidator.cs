@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace RadencyLibrary.CQRS.BookCq.Commands.ReviewCommand
+namespace RadencyLibrary.CQRS.BookCq.Commands.ReviewBook
 {
     public class ReviewBookCommandValidator : AbstractValidator<ReviewBookCommand>
     {

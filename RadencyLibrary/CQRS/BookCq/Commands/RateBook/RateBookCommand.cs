@@ -2,33 +2,31 @@
 using FluentValidation.Results;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using RadencyLibrary.Common.Models;
 using RadencyLibrary.CQRS.Base;
 using RadencyLibrary.CQRS.BookCq.Commands.Save;
 using RadencyLibraryDomain.Entities;
 using RadencyLibraryInfrastructure.Persistence;
 using System.Text.Json.Serialization;
 
-namespace RadencyLibrary.CQRS.BookCq.Commands.ReviewCommand
+namespace RadencyLibrary.CQRS.BookCq.Commands.RateBook
 {
-    public record ReviewBookCommand : IRequest<Response<SaveResult, ValidationFailure>>
+    public record RateBookCommand : IRequest<Response<bool, ValidationFailure>>
     {
         [JsonIgnore]
         public int Id { get; set; }
-        public string Message { get; set; } = string.Empty;
-        public string Reviewer { get; set; } = string.Empty;
+        public int Score { get; set; }
     }
 
-    public class ReviewBookCommandHandler : IRequestHandler<ReviewBookCommand, Response<SaveResult, ValidationFailure>>
+    public class RateBookCommandHandler : IRequestHandler<RateBookCommand, Response<bool, ValidationFailure>>
     {
         private readonly LibraryDbContext _context;
         private readonly IMapper _mapper;
-        private readonly Response<SaveResult, ValidationFailure> _response;
+        private readonly Response<bool, ValidationFailure> _response;
         private readonly ILogger<SaveBookCommand> _logger;
-        public ReviewBookCommandHandler(
+        public RateBookCommandHandler(
             LibraryDbContext context,
             IMapper mapper,
-            Response<SaveResult, ValidationFailure> response,
+            Response<bool, ValidationFailure> response,
             ILogger<SaveBookCommand> logger)
         {
             _context = context;
@@ -36,17 +34,17 @@ namespace RadencyLibrary.CQRS.BookCq.Commands.ReviewCommand
             _response = response;
             _logger = logger;
         }
-        public async Task<Response<SaveResult, ValidationFailure>> Handle(ReviewBookCommand request, CancellationToken cancellationToken)
+        public async Task<Response<bool, ValidationFailure>> Handle(RateBookCommand request, CancellationToken cancellationToken)
         {
-            var review = _mapper.Map<Review>(request);
-            await _context.AddAsync(review);
+            var rating = _mapper.Map<Rating>(request);
+            await _context.AddAsync(rating);
 
             try
             {
                 var count = await _context.SaveChangesAsync();
                 if (count > 0)
                 {
-                    _response.Result = new SaveResult() { Id = review.Id };
+                    _response.Result = true;
                     return _response;
                 }
                 else
@@ -63,7 +61,7 @@ namespace RadencyLibrary.CQRS.BookCq.Commands.ReviewCommand
 
         }
 
-        private void UpdateError(string message, ReviewBookCommand request)
+        private void UpdateError(string message, RateBookCommand request)
         {
             _response.Validated = false;
             _response.Errors.Add(new ValidationFailure("id", message));
