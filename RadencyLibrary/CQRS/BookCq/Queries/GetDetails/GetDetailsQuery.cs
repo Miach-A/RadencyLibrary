@@ -18,18 +18,14 @@ namespace RadencyLibrary.CQRS.BookCq.Queries.GetDetails
         public int Id { get; set; }
     }
 
-    public class GetBookDetailsQueryHandler : IRequestHandler<GetBookDetailsQuery, Response<BookDetailsDto, ValidationFailure>>
+    public class GetBookDetailsQueryHandler : QueryHandler, IRequestHandler<GetBookDetailsQuery, Response<BookDetailsDto, ValidationFailure>>
     {
-        private readonly LibraryDbContext _context;
-        private readonly IMapper _mapper;
         private readonly Response<BookDetailsDto, ValidationFailure> _responce;
         public GetBookDetailsQueryHandler(
             LibraryDbContext context,
             IMapper mapper,
-            Response<BookDetailsDto, ValidationFailure> responce)
+            Response<BookDetailsDto, ValidationFailure> responce) : base(context, mapper)
         {
-            _context = context;
-            _mapper = mapper;
             _responce = responce;
         }
         public async Task<Response<BookDetailsDto, ValidationFailure>> Handle(GetBookDetailsQuery request, CancellationToken cancellationToken)

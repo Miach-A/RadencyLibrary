@@ -15,19 +15,15 @@ namespace RadencyLibrary.CQRS.BookCq.Queries.GetAll
         public string? Order { get; set; }
     }
 
-    public class GetAllBookQueryHandler : IRequestHandler<GetAllBookQuery, Response<IEnumerable<BookDto>, ValidationFailure>>
+    public class GetAllBookQueryHandler : QueryHandler, IRequestHandler<GetAllBookQuery, Response<IEnumerable<BookDto>, ValidationFailure>>
     {
-        private readonly LibraryDbContext _context;
-        private readonly IMapper _mapper;
         private readonly Response<IEnumerable<BookDto>, ValidationFailure> _responce;
 
         public GetAllBookQueryHandler(
             LibraryDbContext context,
             IMapper mapper,
-            Response<IEnumerable<BookDto>, ValidationFailure> responce)
+            Response<IEnumerable<BookDto>, ValidationFailure> responce) : base(context, mapper)
         {
-            _context = context;
-            _mapper = mapper;
             _responce = responce;
         }
         public async Task<Response<IEnumerable<BookDto>, ValidationFailure>> Handle(GetAllBookQuery request, CancellationToken cancellationToken)

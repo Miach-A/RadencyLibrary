@@ -14,19 +14,15 @@ namespace RadencyLibrary.CQRS.BookCq.Queries.GetRecommended
         public string? Genre { get; set; }
     }
 
-    public class GetAllBookQueryHandler : IRequestHandler<GetRecommendedBookQuery, Response<IEnumerable<BookDto>, ValidationFailure>>
+    public class GetAllBookQueryHandler : QueryHandler, IRequestHandler<GetRecommendedBookQuery, Response<IEnumerable<BookDto>, ValidationFailure>>
     {
-        private readonly LibraryDbContext _context;
-        private readonly IMapper _mapper;
         private readonly Response<IEnumerable<BookDto>, ValidationFailure> _response;
 
         public GetAllBookQueryHandler(
             IMapper mapper,
             LibraryDbContext context,
-            Response<IEnumerable<BookDto>, ValidationFailure> response)
+            Response<IEnumerable<BookDto>, ValidationFailure> response) : base(context, mapper)
         {
-            _context = context;
-            _mapper = mapper;
             _response = response;
         }
         public async Task<Response<IEnumerable<BookDto>, ValidationFailure>> Handle(GetRecommendedBookQuery request, CancellationToken cancellationToken)
