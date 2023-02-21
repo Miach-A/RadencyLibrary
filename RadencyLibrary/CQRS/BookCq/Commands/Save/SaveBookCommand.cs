@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using FluentValidation.Results;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using RadencyLibrary.Common.Models;
 using RadencyLibrary.CQRS.Base;
+using RadencyLibraryDomain.Entities;
 using RadencyLibraryInfrastructure.Persistence;
 
 namespace RadencyLibrary.CQRS.BookCq.Commands.Save
@@ -22,40 +24,58 @@ namespace RadencyLibrary.CQRS.BookCq.Commands.Save
         private readonly LibraryDbContext _context;
         private readonly IMapper _mapper;
         private readonly Response<SaveResult, ValidationFailure> _response;
+        private readonly ILogger<SaveBookCommand> _logger;
         public SaveBookCommandHandler(
             LibraryDbContext context,
             IMapper mapper,
-            Response<SaveResult, ValidationFailure> response)
+            Response<SaveResult, ValidationFailure> response,
+            ILogger<SaveBookCommand> logger)
         {
             _context = context;
             _mapper = mapper;
             _response = response;
+            _logger = logger;
         }
         public async Task<Response<SaveResult, ValidationFailure>> Handle(SaveBookCommand request, CancellationToken cancellationToken)
         {
-            //var book = _context.F
+            var book = _context.Books.FirstOrDefault(x => x.Id == request.Id);
+            if (book == null)
+            {
+                book = _mapper.Map<Book>(request);
+                await _context.AddAsync(book);
+            }
+            {
+                book = _mapper.Map<Book>(request);
+                _context.Update(book);
+            }
 
-            //var book = _mapper.Map<Book>(request);
+            try
+            {
+                var count = await _context.SaveChangesAsync();
+                if (count > 0)
+                {
+                    _response.Result = new SaveResult() { Id = book.Id };
+                    return _response;
+                }
+                else
+                {
+                    UpdateError(string.Concat("Id= ", request.Id, " not save"), request);
+                };
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                UpdateError(ex.Message, request);
+            }
 
-            //if (book == null)
-            //{
-            //    throw new Exception("map error");
-            //}
-            //var bookContext = _context.Books.Attach(book);
-            //bookContext.State = EntityState.Detached;
+            return _response;
+        }
 
-            //var count = await _context.SaveChangesAsync();
-            //if (count == 0)
-            //{
-            //    await _context.AddAsync(book);
-            //    count = await _context.SaveChangesAsync();
-            //}
-
-            //if (count == 0)
-            //{
-            //    throw new DbUpdateConcurrencyException();
-            //}
-            return _response;//new SaveResult() { Id = request.Id };
+        private void UpdateError(string message, SaveBookCommand request)
+        {
+            _response.Validated = false;
+            _response.Errors.Add(new ValidationFailure("id", message));
+            var requestName = request.GetType().Name;
+            _logger.LogError("Radency library request: Update database Exeption for Request {Name} {@Request}", requestName, request);
         }
     }
 }

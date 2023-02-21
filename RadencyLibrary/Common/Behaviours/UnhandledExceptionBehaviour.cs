@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using MediatR;
+﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace RadencyLibrary.Common.Behaviours
@@ -27,10 +26,10 @@ namespace RadencyLibrary.Common.Behaviours
 
                 throw;
             }
-            catch (ValidationException ex)
-            {
-                throw ex;
-            }
+            //catch (ValidationException ex)
+            //{
+            //    throw ex;
+            //}
             catch (Exception ex)
             {
                 var requestName = typeof(TRequest).Name;

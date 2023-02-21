@@ -39,6 +39,12 @@ namespace RadencyLibrary.CQRS.BookCq.Queries.GetDetails
                 .ProjectTo<BookDetailsDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync();
 
+            if (_responce.Result == null)
+            {
+                _responce.Validated = false;
+                _responce.Errors.Add(new ValidationFailure("id", "id not exist"));
+            }
+
             return _responce;
         }
     }
