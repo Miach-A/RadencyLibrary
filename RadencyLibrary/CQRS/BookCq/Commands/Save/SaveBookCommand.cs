@@ -11,7 +11,7 @@ namespace RadencyLibrary.CQRS.BookCq.Commands.Save
 {
     public record SaveBookCommand : IRequest<Response<SaveResult, ValidationFailure>>//SaveResult>
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Cover { get; set; } = string.Empty;
         public string Content { get; set; } = string.Empty;
@@ -38,15 +38,23 @@ namespace RadencyLibrary.CQRS.BookCq.Commands.Save
         }
         public async Task<Response<SaveResult, ValidationFailure>> Handle(SaveBookCommand request, CancellationToken cancellationToken)
         {
-            var book = _context.Books.FirstOrDefault(x => x.Id == request.Id);
-            if (book == null)
+            Book? book;
+
+            if (request.Id != null)
+            {
+                book = _context.Books.FirstOrDefault(x => x.Id == request.Id);
+                if (book == null)
+                {
+                    UpdateError(string.Concat("Id= ", request.Id, " not save"), request);
+                    return _response;
+                };
+                _mapper.Map(request, book);
+                _context.Update(book);
+            }
+            else
             {
                 book = _mapper.Map<Book>(request);
                 await _context.AddAsync(book);
-            }
-            {
-                book = _mapper.Map<Book>(request);
-                _context.Update(book);
             }
 
             try
