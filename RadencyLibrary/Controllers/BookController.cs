@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RadencyLibrary.CQRS.BookCq.Commands.Delete;
+using RadencyLibrary.CQRS.BookCq.Commands.ReviewCommand;
 using RadencyLibrary.CQRS.BookCq.Commands.Save;
 using RadencyLibrary.CQRS.BookCq.Dto;
 using RadencyLibrary.CQRS.BookCq.Queries.GetAll;
@@ -19,7 +20,6 @@ namespace RadencyLibrary.Controllers
         /// </summary>
         /// <responce code="200">Success</responce>
         /// <responce code="400">BadRequest</responce>
-
         [HttpGet]
         [Route("/api/books")]
         [ProducesResponseType(typeof(IEnumerable<BookDto>), StatusCodes.Status200OK)]
@@ -32,14 +32,6 @@ namespace RadencyLibrary.Controllers
                 return BadRequest(responce.Errors);
             }
             return Ok(responce.Result);
-            //try
-            //{
-            //    return Ok(await Mediator.Send(query));
-            //}
-            //catch (ValidationException ex)
-            //{
-            //    return BadRequest(ex.Errors);
-            //}
         }
 
         /// <summary>
@@ -59,14 +51,6 @@ namespace RadencyLibrary.Controllers
                 return BadRequest(responce.Errors);
             }
             return Ok(responce.Result);
-            //try
-            //{
-            //    return Ok(await Mediator.Send(query));
-            //}
-            //catch (ValidationException ex)
-            //{
-            //    return BadRequest(ex.Errors);
-            //}
         }
 
         /// <summary>
@@ -87,20 +71,6 @@ namespace RadencyLibrary.Controllers
                 return BadRequest(responce.Errors);
             }
             return Ok(responce.Result);
-
-            //try
-            //{
-            //    var res = await Mediator.Send(new GetBookDetailsQuery(id));
-            //    if (res == null)
-            //    {
-            //        return BadRequest(new ValidationFailure("id", "id does not exist"));
-            //    }
-            //    return Ok(res);
-            //}
-            //catch (ValidationException ex)
-            //{
-            //    return BadRequest(ex.Errors);
-            //}
         }
 
         /// <summary>
@@ -120,22 +90,7 @@ namespace RadencyLibrary.Controllers
                 return BadRequest(responce.Errors);
             }
             return Ok(responce.Result);
-
-            //try
-            //{
-            //    await Mediator.Send(new DeleteBookCommand(id, secret));
-            //    return Ok();
-            //}
-            //catch (ValidationException ex)
-            //{
-            //    return BadRequest(ex.Errors);
-            //}
-            //catch (DbUpdateConcurrencyException ex)
-            //{
-            //    return BadRequest(new ValidationFailure("id", ex.Message));
-            //}
         }
-
 
         /// <summary>
         /// Save a new book
@@ -148,26 +103,32 @@ namespace RadencyLibrary.Controllers
         [ProducesResponseType(typeof(IEnumerable<ValidationFailure>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> BookSave([FromBody] SaveBookCommand query)
         {
-
             var responce = await Mediator.Send(query);
             if (!responce.Validated)
             {
                 return BadRequest(responce.Errors);
             }
             return Ok(responce.Result);
-            //try
-            //{
-            //    await Mediator.Send(query);
-            //    return Ok();
-            //}
-            //catch (ValidationException ex)
-            //{
-            //    return BadRequest(ex.Errors);
-            //}
-            //catch (DbUpdateConcurrencyException ex)
-            //{
-            //    return BadRequest(new ValidationFailure("id", ex.Message));
-            //}
+        }
+
+        /// <summary>
+        /// Save a review for the book
+        /// </summary>
+        /// <responce code="200">Success</responce>
+        /// <responce code="400">BadRequest</responce>
+        [HttpPut]
+        [Route("/api/books/{id}/review")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<ValidationFailure>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ReviewSave(int id, [FromBody] ReviewBookCommand query)
+        {
+            query.Id = id;
+            var responce = await Mediator.Send(query);
+            if (!responce.Validated)
+            {
+                return BadRequest(responce.Errors);
+            }
+            return Ok(responce.Result);
         }
     }
 }
