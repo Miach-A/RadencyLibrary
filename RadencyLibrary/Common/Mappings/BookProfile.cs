@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using RadencyLibrary.CQRS.BookCq.Commands.Review;
+using RadencyLibrary.CQRS.BookCq.Commands.ReviewCommand;
 using RadencyLibrary.CQRS.BookCq.Commands.Save;
 using RadencyLibrary.CQRS.BookCq.Dto;
 using RadencyLibraryDomain.Entities;
@@ -34,6 +34,7 @@ namespace RadencyLibrary.Common.Mappings
 
             CreateMap<ReviewBookCommand, Review>()
                 .ForMember(x => x.Book, y => y.Ignore())
+                .ForMember(x => x.Id, y => y.Ignore())
                 .ForMember(x => x.BookId, y => y.MapFrom(x => x.Id));
 
         }

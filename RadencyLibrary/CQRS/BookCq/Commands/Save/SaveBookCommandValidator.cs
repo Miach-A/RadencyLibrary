@@ -6,7 +6,6 @@ namespace RadencyLibrary.CQRS.BookCq.Commands.Save
     {
         public SaveBookCommandValidator()
         {
-            //RuleFor(x => x.Id).NotEmpty();
             RuleFor(x => x.Author).NotEmpty();
             RuleFor(x => x.Title).NotEmpty();
             RuleFor(x => x.Content).NotEmpty();

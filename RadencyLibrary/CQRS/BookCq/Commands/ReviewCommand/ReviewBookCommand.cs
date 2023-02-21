@@ -7,11 +7,13 @@ using RadencyLibrary.CQRS.Base;
 using RadencyLibrary.CQRS.BookCq.Commands.Save;
 using RadencyLibraryDomain.Entities;
 using RadencyLibraryInfrastructure.Persistence;
+using System.Text.Json.Serialization;
 
 namespace RadencyLibrary.CQRS.BookCq.Commands.ReviewCommand
 {
     public record ReviewBookCommand : IRequest<Response<SaveResult, ValidationFailure>>
     {
+        [JsonIgnore]
         public int Id { get; set; }
         public string Message { get; set; } = string.Empty;
         public string Reviewer { get; set; } = string.Empty;
