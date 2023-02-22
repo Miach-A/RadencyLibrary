@@ -25,7 +25,10 @@ public static class ConfigureServices
         maperConfig.AssertConfigurationIsValid();
         var mapper = maperConfig.CreateMapper();
         services.AddSingleton<IMapper>(mapper);
-
+        //services.AddHttpsRedirection(cfg =>
+        //{
+        //    cfg.
+        //});
         services.AddHttpLogging(cfg =>
         {
             cfg.LoggingFields = AspNetCore.HttpLogging.HttpLoggingFields.All;
@@ -55,6 +58,18 @@ public static class ConfigureServices
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 
         services.AddTransient(typeof(Response<,>));
+
+        services.AddCors(option =>
+        {
+            option.AddDefaultPolicy(builder =>
+                builder
+                //.AllowAnyOrigin()
+                .WithOrigins(new string[] { "http://localhost:4200", "https://localhost:4200" })
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials()
+                 );
+        });
 
         return services;
     }
