@@ -90,7 +90,7 @@ namespace RadencyLibrary.Controllers
             {
                 return BadRequest(responce.Errors);
             }
-            return Ok(responce.Result);
+            return Ok();
         }
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace RadencyLibrary.Controllers
             {
                 return BadRequest(responce.Errors);
             }
-            return Ok(responce.Result);
+            return Ok();
         }
     }
 }
