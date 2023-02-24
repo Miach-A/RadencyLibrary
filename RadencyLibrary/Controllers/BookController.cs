@@ -8,6 +8,7 @@ using RadencyLibrary.CQRS.BookCq.Commands.Save;
 using RadencyLibrary.CQRS.BookCq.Dto;
 using RadencyLibrary.CQRS.BookCq.Queries.GetAll;
 using RadencyLibrary.CQRS.BookCq.Queries.GetDetails;
+using RadencyLibrary.CQRS.BookCq.Queries.GetForEdit;
 using RadencyLibrary.CQRS.BookCq.Queries.GetRecommended;
 
 namespace RadencyLibrary.Controllers
@@ -150,6 +151,25 @@ namespace RadencyLibrary.Controllers
                 return BadRequest(responce.Errors);
             }
             return Ok();
+        }
+
+        /// <summary>
+        /// Get book for edit
+        /// </summary>
+        /// <responce code="200">Success</responce>
+        /// <responce code="400">BadRequest</responce>
+        [HttpGet]
+        [Route("/api/books/{id}/edit")]
+        [ProducesResponseType(typeof(BookEditDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<ValidationFailure>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> BookEdit(int id)
+        {
+            var responce = await Mediator.Send(new GetForEditBookQuery(id));
+            if (!responce.Validated)
+            {
+                return BadRequest(responce.Errors);
+            }
+            return Ok(responce.Result);
         }
     }
 }
