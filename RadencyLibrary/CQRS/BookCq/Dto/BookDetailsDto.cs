@@ -7,6 +7,7 @@
         public string Author { get; set; } = string.Empty;
         public string Cover { get; set; } = string.Empty;
         public string Content { get; set; } = string.Empty;
+        public string Genre { get; set; } = string.Empty;
         public decimal Rating { get; set; }
         public ICollection<ReviewDto> Reviews { get; set; } = null!;
     }

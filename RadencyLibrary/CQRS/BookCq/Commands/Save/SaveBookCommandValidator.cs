@@ -9,7 +9,6 @@ namespace RadencyLibrary.CQRS.BookCq.Commands.Save
             RuleFor(x => x.Author).NotEmpty();
             RuleFor(x => x.Title).NotEmpty();
             RuleFor(x => x.Content).NotEmpty();
-            RuleFor(x => x.Cover).NotEmpty();
             RuleFor(x => x.Genre).NotEmpty();
         }
     }

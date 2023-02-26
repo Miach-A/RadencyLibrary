@@ -27,6 +27,8 @@ namespace RadencyLibrary.Common.Mappings
                         ? Convert.ToDecimal(x.Ratings.Average(y => y.Score))
                         : 0));
 
+            CreateMap<Book, BookEditDto>();
+
             CreateMap<Review, ReviewDto>();
 
             CreateMap<SaveBookCommand, Book>()

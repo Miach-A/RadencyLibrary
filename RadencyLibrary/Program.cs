@@ -30,11 +30,12 @@ try
     app.UseSwagger();
     app.UseSwaggerUI(cfg => cfg.SwaggerEndpoint("v1/swagger.json", "Library v1"));
 
+    app.UseCors();
+
     app.UseAuthorization();
 
     app.MapControllers();
     app.SeedLibrary();
-
 
     app.Run();
 }
